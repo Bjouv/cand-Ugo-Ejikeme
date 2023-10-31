@@ -9,6 +9,7 @@ Take Home Task (Backend) for Tech Talk
 ## Installation (Without Docker)
 - Clone the repository
 - Run `yarn install` to install dependencies
+- Run `yarn build` to build the project
 - Run `yarn start` to start the server
 
 ## Usage
