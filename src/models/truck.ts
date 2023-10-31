@@ -40,8 +40,6 @@ const truckSchema = new mongoose.Schema({
     versionKey: false,
 });
 
-//truckSchema.index({ location: '2dsphere' });
-
 const Truck = mongoose.model('TruckModel', truckSchema);
 
 Truck.collection.createIndex({ location: '2dsphere' }).then(() => {

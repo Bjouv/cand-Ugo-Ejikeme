@@ -3,7 +3,7 @@ import Truck from '../models/truck';
 
 export const createTruck = async (req: Request, res: Response) => {
     try {
-        const newTruckData = {
+        const truck = new Truck({
             make: req.body.make,
             year: req.body.year,
             capacity: req.body.capacity,
@@ -12,38 +12,31 @@ export const createTruck = async (req: Request, res: Response) => {
                 type: 'Point',
                 coordinates: [parseFloat(req.body.longitude), parseFloat(req.body.latitude)],
             },
-        };
+        });
 
-        const truck = new Truck(newTruckData);
-        const savedTruck = await truck.save();
-
-        res.json(savedTruck);
+        res.status(201).json(await truck.save());
     } catch (error) {
         res.status(500).json({ message: 'Truck creation failed' });
     }
 };
 
 export const getTruck = async (req: Request, res: Response) => {
-    const truckId = req.params.id;
+    const truck = await Truck.findOne({ _id: req.params.id });
 
-    const truck = await Truck.findOne({ _id: truckId });
-
-    if (truck) {
-        res.json(truck);
-    } else {
+    if (!truck) {
         res.status(404).json({ message: 'Truck not found' });
+        return;
     }
+
+    res.json(truck);
 };
 
-export const getAllTrucks = async (req: Request, res: Response) => {
-    const trucks = await Truck.find({});
-    res.json(trucks);
+export const getAllTrucks = async (req: Request, res: Response) => {;
+    res.json(await Truck.find({}));
 };
 
 export const getTrucksNearby = async (req: Request, res: Response) => {
     const { lat, lon, rad } = req.query;
-    const latitude = parseFloat(lat as string);
-    const longitude = parseFloat(lon as string);
     const radius = parseFloat(rad as string) || 10;
 
     const nearbyTrucks = await Truck.find({
@@ -51,7 +44,7 @@ export const getTrucksNearby = async (req: Request, res: Response) => {
             $near: {
                 $geometry: {
                     type: 'Point',
-                    coordinates: [longitude, latitude],
+                    coordinates: [parseFloat(lat as string), parseFloat(lon as string)],
                 },
                 $maxDistance: radius * 1000,
             },

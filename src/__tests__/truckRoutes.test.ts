@@ -1,41 +1,34 @@
 import request from 'supertest';
 import app from '../app';
 
-describe('Truck Fleet Service API', () => {
-  it('should create a new truck', async () => {
-    const response = await request(app)
+// imitate test factory
+const createTruck = async () => {
+    return request(app)
         .post('/')
         .send({
-          make: 'Toyota',
-          year: 2023,
-          capacity: 5000,
-          status: 'Available',
-          latitude: 45.123,
-          longitude: -75.456,
+            make: 'Toyota',
+            year: 2023,
+            capacity: 5000,
+            status: 'Available',
+            latitude: 45.123,
+            longitude: -75.456,
         });
+}
 
-    expect(response.status).toBe(200);
+describe('Truck Fleet Service API', () => {
+  it('should create a new truck', async () => {
+    const response = await createTruck();
+
+    expect(response.status).toBe(201);
     expect(response.body._id).toBeDefined();
   });
 
   it('should get a specific truck', async () => {
-    const createResponse = await request(app)
-        .post('/')
-        .send({
-          make: 'Toyota',
-          year: 2023,
-          capacity: 5000,
-          status: 'Available',
-          latitude: 45.123,
-          longitude: -75.456,
-        });
-
-    const truckId = createResponse.body._id;
-
-    const response = await request(app).get(`/${truckId}`);
+    const createResponse = await createTruck();
+    const response = await request(app).get(`/${createResponse.body._id}`);
 
     expect(response.status).toBe(200);
-    expect(response.body._id).toBe(truckId);
+    expect(response.body._id).toBe(createResponse.body._id);
   });
 
   it('should return a 404 status for a non-existent truck', async () => {
@@ -45,17 +38,17 @@ describe('Truck Fleet Service API', () => {
   });
 
   it('should get trucks within a certain radius', async () => {
-    // Assuming you have test data in your database
-    const response = await request(app).get('/nearby?lat=45.123&lon=-75.456');
+    await createTruck();
+    const response = await request(app).get('/nearby?lat=45.123&lon=-75.456&rad=100000');
 
     expect(response.status).toBe(200);
-    expect(response.body.length).toBeGreaterThan(0); // Ensure you get some trucks
+    expect(response.body.length).toBeGreaterThan(0);
   });
 
     it('should validate createTruck request with invalid data', async () => {
         const response = await request(app)
             .post('/')
-            .send({}); // Invalid data, should trigger validation errors
+            .send({});
 
         expect(response.status).toBe(400);
     });
@@ -69,13 +62,13 @@ describe('Truck Fleet Service API', () => {
 
     it('should validate getTrucksNearby request with invalid data', async () => {
         const response = await request(app)
-            .get('/nearby?lat=invalid&lon=invalid'); // Invalid data, should trigger validation errors
+            .get('/nearby?lat=invalid&lon=invalid');
 
         expect(response.status).toBe(400);
     });
 
     it('should validate truckId with invalid ID format', async () => {
-        const invalidId = 'invalid-id'; // Invalid ID format
+        const invalidId = 'invalid-id';
 
         const response = await request(app)
             .get(`/${invalidId}`);
