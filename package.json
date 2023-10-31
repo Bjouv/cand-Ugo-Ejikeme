@@ -1,0 +1,35 @@
+{
+  "name": "truck-fleet",
+  "version": "1.0.0",
+  "description": "Truck Fleet Tracking System",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node dist/app.js",
+    "dev": "nodemon --exec ts-node src/app.ts",
+    "build": "tsc",
+    "test": "jest --coverage --forceExit",
+    "test:watch": "jest --watch",
+    "seed": "node dist/seed.js"
+  },
+  "author": "Ugochukwu Ejikeme",
+  "license": "MIT",
+  "dependencies": {
+    "@types/mongoose": "^5.11.97",
+    "express": "^4.18.2",
+    "express-async-handler": "^1.2.0",
+    "joi": "^17.11.0",
+    "mongodb": "^4.0.0",
+    "mongoose": "^7.6.3",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.5.5"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.20",
+    "@types/jest": "^29.5.6",
+    "@types/supertest": "^2.0.15",
+    "jest": "^29.7.0",
+    "nodemon": "^2.0.15",
+    "supertest": "^6.3.3",
+    "ts-jest": "^29.1.1"
+  }
+}
